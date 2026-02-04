@@ -80,6 +80,7 @@ class ActivityOne {
         lnameField = new JTextField();
         emailField = new JTextField();
         passwordField = new JPasswordField();
+        submitButton = new JButton("Submit");
 
         JPanel panel = new JPanel(new GridLayout(5, 2, 10, 10));
         panel.add(new JLabel("Enter First Name: "));
@@ -114,7 +115,7 @@ class ActivityOne {
                 stmt.setString(3, email);
                 stmt.setString(4, Utils.hashPassword(new String(password)));
                 stmt.executeUpdate();
-                JOptionPane.showMessageDialog(frame, "Employee added successfully!");
+                JOptionPane.showMessageDialog(frame, "User added successfully!");
 
                 stmt.close();
                 db.conn.close();
@@ -127,7 +128,7 @@ class ActivityOne {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(()-> new ActivityOne().EmployeeEntryModule());
+        // SwingUtilities.invokeLater(()-> new ActivityOne().EmployeeEntryModule());
         SwingUtilities.invokeLater(()-> new ActivityOne().UserEntryModule());
     }
 }
