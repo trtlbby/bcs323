@@ -7,13 +7,13 @@
  */
 
 import javax.swing.*;
-import java.awt.event.*;
+import java.awt.GridLayout;
 import java.sql.PreparedStatement;
 
 
 class ActivityOne {
 
-    //instance of the DBConenctor
+    //instance of the DBConnector
     DBConnector db = new DBConnector();
     JFrame frame;
     JTextField fnameField, lnameField, emailField;
@@ -28,7 +28,7 @@ class ActivityOne {
         passwordField = new JPasswordField(20);
         submitButton = new JButton("SUBMIT");
 
-        JPanel panel = new JPanel();
+        JPanel panel = new JPanel(new GridLayout(5, 2, 10, 10));
         panel.add(new JLabel("Enter First Name: "));
         panel.add(fnameField);
         panel.add(new JLabel("Enter Last Name"));
@@ -37,8 +37,11 @@ class ActivityOne {
         panel.add(emailField);
         panel.add(new JLabel("Enter Password: "));
         panel.add(passwordField);
+        panel.add(new JLabel());
         panel.add(submitButton);
 
+        frame.setLocationRelativeTo(null);
+        frame.setTitle("EMPLOYEE REGISTRY");
         frame.add(panel);
         frame.pack();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -51,13 +54,13 @@ class ActivityOne {
             String email = emailField.getText();
             char[] password = passwordField.getPassword();
         
-            String sql = "INSERT INTO employees (first_name, last_name, email, password) (?, ?, ?,?)";
+            String sql = "INSERT INTO employees (first_name, last_name, email, password) values (?, ?, ?,?)";
             try {
                 PreparedStatement stmt = db.conn.prepareStatement(sql);
                 stmt.setString(1, first_name);
                 stmt.setString(2, last_name);
                 stmt.setString(3, email);
-                stmt.setString(4, new String(password));
+                stmt.setString(4, Utils.hashPassword(new String(password)));
                 stmt.executeUpdate();
                 JOptionPane.showMessageDialog(frame, "Employee added successfully!");
 
@@ -70,6 +73,8 @@ class ActivityOne {
             }
         });
     }
+
+    
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(()-> new ActivityOne().EmployeeEntryModule());
