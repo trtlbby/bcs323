@@ -11,7 +11,6 @@ public class UserEntryModule {
 
     public void show() {
         frame = new JFrame("USER DATA ENTRY MODULE");
-        frame.setSize(250, 250);
         fnameField = new JTextField(20);
         lnameField = new JTextField(20);
         emailField = new JTextField(20);
@@ -29,7 +28,6 @@ public class UserEntryModule {
         panel.add(passwordField);
         panel.add(new JLabel());
         panel.add(submitButton);
-        panel.add(new JLabel());
 
         frame.setLocationRelativeTo(null);
         frame.setTitle("USER REGISTRY");
