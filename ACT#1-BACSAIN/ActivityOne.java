@@ -20,115 +20,32 @@ class ActivityOne {
     JPasswordField passwordField;
     JButton submitButton;
 
-    public void EmployeeEntryModule() {
-        frame = new JFrame("EMPLOYEE DATA ENTRY MODULE");
-        fnameField = new JTextField(20);
-        lnameField = new JTextField(20);
-        emailField = new JTextField(20);
-        passwordField = new JPasswordField(20);
-        submitButton = new JButton("SUBMIT");
-
-        JPanel panel = new JPanel(new GridLayout(5, 2, 10, 10));
-        panel.add(new JLabel("Enter First Name: "));
-        panel.add(fnameField);
-        panel.add(new JLabel("Enter Last Name"));
-        panel.add(lnameField);
-        panel.add(new JLabel("Enter Email: "));
-        panel.add(emailField);
-        panel.add(new JLabel("Enter Password: "));
-        panel.add(passwordField);
-        panel.add(new JLabel());
-        panel.add(submitButton);
-
-        frame.setLocationRelativeTo(null);
-        frame.setTitle("EMPLOYEE REGISTRY");
-        frame.add(panel);
-        frame.pack();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
-
-
-        submitButton.addActionListener(e -> {
-            String first_name = fnameField.getText();
-            String last_name = lnameField.getText();
-            String email = emailField.getText();
-            char[] password = passwordField.getPassword();
-        
-            String sql = "INSERT INTO employees (first_name, last_name, email, password) values (?, ?, ?,?)";
-            try {
-                PreparedStatement stmt = db.conn.prepareStatement(sql);
-                stmt.setString(1, first_name);
-                stmt.setString(2, last_name);
-                stmt.setString(3, email);
-                stmt.setString(4, Utils.hashPassword(new String(password)));
-                stmt.executeUpdate();
-                JOptionPane.showMessageDialog(frame, "Employee added successfully!");
-
-                stmt.close();
-                db.conn.close();
-            } catch (java.sql.SQLException ex) {
-                ex.printStackTrace();
-                JOptionPane.showMessageDialog(frame, "Database error: " + ex.getMessage());
-                System.out.println("Database error: " + ex.getMessage());
-            }
-        });
-    }
-
-    public void UserEntryModule(){
-        frame = new JFrame("User Entry Module");
-        fnameField = new JTextField();
-        lnameField = new JTextField();
-        emailField = new JTextField();
-        passwordField = new JPasswordField();
-        submitButton = new JButton("Submit");
-
-        JPanel panel = new JPanel(new GridLayout(5, 2, 10, 10));
-        panel.add(new JLabel("Enter First Name: "));
-        panel.add(fnameField);
-        panel.add(new JLabel("Enter Last Name"));
-        panel.add(lnameField);
-        panel.add(new JLabel("Enter Email: "));
-        panel.add(emailField);
-        panel.add(new JLabel("Enter Password: "));
-        panel.add(passwordField);
-        panel.add(new JLabel());
-        panel.add(submitButton);
-
-        frame.setLocationRelativeTo(null);
-        frame.setTitle("User Entry Module");
-        frame.add(panel);
-        frame.pack();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
-
-        submitButton.addActionListener(e -> {
-            String first_name = fnameField.getText();
-            String last_name = lnameField.getText();
-            String email = emailField.getText();
-            char[] password = passwordField.getPassword();
-        
-            String sql = "INSERT INTO users (first_name, last_name, email, password) values (?, ?, ?,?)";
-            try {
-                PreparedStatement stmt = db.conn.prepareStatement(sql);
-                stmt.setString(1, first_name);
-                stmt.setString(2, last_name);
-                stmt.setString(3, email);
-                stmt.setString(4, Utils.hashPassword(new String(password)));
-                stmt.executeUpdate();
-                JOptionPane.showMessageDialog(frame, "User added successfully!");
-
-                stmt.close();
-                db.conn.close();
-            } catch (java.sql.SQLException ex) {
-                ex.printStackTrace();
-                JOptionPane.showMessageDialog(frame, "Database error: " + ex.getMessage());
-                System.out.println("Database error: " + ex.getMessage());
-            }
-        });
-    }
-
     public static void main(String[] args) {
-        // SwingUtilities.invokeLater(()-> new ActivityOne().EmployeeEntryModule());
-        SwingUtilities.invokeLater(()-> new ActivityOne().UserEntryModule());
+        SwingUtilities.invokeLater(() -> {
+            JFrame chooserFrame = new JFrame("Choose Entry Module");
+            chooserFrame.setSize(500, 500);
+            chooserFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            chooserFrame.setLocationRelativeTo(null);
+
+            JPanel panel = new JPanel(new GridLayout(2, 1, 20, 20));
+            JButton employeeBtn = new JButton("Employee Entry");
+            JButton userBtn = new JButton("User Entry");
+
+            employeeBtn.addActionListener(e -> {
+                chooserFrame.dispose();
+                new EmployeeEntryModule().show();
+            });
+
+            userBtn.addActionListener(e -> {
+                chooserFrame.dispose();
+                new UserEntryModule().show();
+            });
+
+            panel.add(employeeBtn);
+            panel.add(userBtn);
+
+            chooserFrame.add(panel);
+            chooserFrame.setVisible(true);
+        });
     }
 }
