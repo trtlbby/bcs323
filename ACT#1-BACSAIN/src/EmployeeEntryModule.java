@@ -5,11 +5,18 @@ import java.sql.SQLException;
 import java.util.Arrays;
 
 public class EmployeeEntryModule {
-    private DBConnector db = new DBConnector();
+    private DBConnector db;
     private JFrame frame;
     private JTextField fnameField, lnameField, emailField;
     private JPasswordField passwordField;
     private JButton submitButton;
+
+    private DBConnector getDB() {
+        if (db == null) {
+            db = new DBConnector();
+        }
+        return db;
+    }
 
     public void show() {
         frame = new JFrame("EMPLOYEE DATA ENTRY MODULE");
@@ -64,7 +71,7 @@ public class EmployeeEntryModule {
                 String encodedPassword = PasswordHasher.hash(password);
 
                 String sql = "INSERT INTO employees (first_name, last_name, email, password) values (?, ?, ?,?)";
-                try (PreparedStatement stmt = db.conn.prepareStatement(sql)) {
+                try (PreparedStatement stmt = getDB().conn.prepareStatement(sql)) {
                     stmt.setString(1, first_name.trim());
                     stmt.setString(2, last_name.trim());
                     stmt.setString(3, email.trim());
@@ -79,7 +86,7 @@ public class EmployeeEntryModule {
             } finally {
                 Arrays.fill(password, '\0');
                 try {
-                    db.conn.close();
+                    getDB().conn.close();
                 } catch (SQLException ignored) {
                 }
             }
