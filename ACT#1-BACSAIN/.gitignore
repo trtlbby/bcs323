@@ -1,0 +1,10 @@
+# Compiled Java artifacts
+*.class
+
+# Common build output folders
+bin/
+out/
+target/
+
+# Local env files
+.env
