@@ -1,18 +1,16 @@
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
 public class Utils {
-    public static String hashPassword(String password) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            byte[] hashedBytes = md.digest(password.getBytes());
-            StringBuilder sb = new StringBuilder();
-            for (byte b : hashedBytes) {
-                sb.append(String.format("%02x", b));
-            }
-            return sb.toString();
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("SHA-256 algorithm not found.", e);
-        }
+    public static boolean isBlank(String s) {
+        return s == null || s.trim().isEmpty();
+    }
+
+    public static boolean isValidEmail(String email) {
+        if (email == null) return false;
+        String e = email.trim();
+        // Basic email check (good enough for classroom demos)
+        return e.matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$");
+    }
+
+    public static boolean isValidPassword(char[] password) {
+        return password != null && password.length >= 8;
     }
 }

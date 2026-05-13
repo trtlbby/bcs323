@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.awt.GridLayout;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Arrays;
 
 public class UserEntryModule {
@@ -43,29 +44,43 @@ public class UserEntryModule {
             String email = emailField.getText();
             char[] password = passwordField.getPassword();
 
-            String encodedPassword;
             try {
-                encodedPassword = PasswordHasher.hash(password);
+                if (Utils.isBlank(first_name) || Utils.isBlank(last_name) || Utils.isBlank(email)) {
+                    JOptionPane.showMessageDialog(frame, "Please fill in all required fields.");
+                    return;
+                }
+
+                if (!Utils.isValidEmail(email)) {
+                    JOptionPane.showMessageDialog(frame, "Please enter a valid email address.");
+                    return;
+                }
+
+                if (!Utils.isValidPassword(password)) {
+                    JOptionPane.showMessageDialog(frame, "Password must be at least 8 characters.");
+                    return;
+                }
+
+                String encodedPassword = PasswordHasher.hash(password);
+
+                String sql = "INSERT INTO users (first_name, last_name, email, password) values (?, ?, ?,?)";
+                try (PreparedStatement stmt = db.conn.prepareStatement(sql)) {
+                    stmt.setString(1, first_name.trim());
+                    stmt.setString(2, last_name.trim());
+                    stmt.setString(3, email.trim());
+                    stmt.setString(4, encodedPassword);
+                    stmt.executeUpdate();
+                    JOptionPane.showMessageDialog(frame, "User added successfully!");
+                    passwordField.setText("");
+                }
+            } catch (SQLException ex) {
+                System.out.println("Database error: " + ex.getMessage());
+                JOptionPane.showMessageDialog(frame, "Unable to save user. Please try again.");
             } finally {
                 Arrays.fill(password, '\0');
-            }
-
-            String sql = "INSERT INTO users (first_name, last_name, email, password) values (?, ?, ?,?)";
-            try {
-                PreparedStatement stmt = db.conn.prepareStatement(sql);
-                stmt.setString(1, first_name);
-                stmt.setString(2, last_name);
-                stmt.setString(3, email);
-                stmt.setString(4, encodedPassword);
-                stmt.executeUpdate();
-                JOptionPane.showMessageDialog(frame, "User added successfully!");
-
-                stmt.close();
-                db.conn.close();
-            } catch (java.sql.SQLException ex) {
-                ex.printStackTrace();
-                JOptionPane.showMessageDialog(frame, "Database error: " + ex.getMessage());
-                System.out.println("Database error: " + ex.getMessage());
+                try {
+                    db.conn.close();
+                } catch (SQLException ignored) {
+                }
             }
         });
     }
