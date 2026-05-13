@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.awt.GridLayout;
 import java.sql.PreparedStatement;
+import java.util.Arrays;
 
 public class EmployeeEntryModule {
     private DBConnector db = new DBConnector();
@@ -43,13 +44,20 @@ public class EmployeeEntryModule {
             String email = emailField.getText();
             char[] password = passwordField.getPassword();
 
+            String encodedPassword;
+            try {
+                encodedPassword = PasswordHasher.hash(password);
+            } finally {
+                Arrays.fill(password, '\0');
+            }
+
             String sql = "INSERT INTO employees (first_name, last_name, email, password) values (?, ?, ?,?)";
             try {
                 PreparedStatement stmt = db.conn.prepareStatement(sql);
                 stmt.setString(1, first_name);
                 stmt.setString(2, last_name);
                 stmt.setString(3, email);
-                stmt.setString(4, Utils.hashPassword(new String(password)));
+                stmt.setString(4, encodedPassword);
                 stmt.executeUpdate();
                 JOptionPane.showMessageDialog(frame, "Employee added successfully!");
 
