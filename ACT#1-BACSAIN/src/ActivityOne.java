@@ -7,6 +7,8 @@
         3. Add basic role-based access control (RBAC) for module access.
  */
 
+package src;
+
 import javax.swing.*;
 import java.awt.GridLayout;
 

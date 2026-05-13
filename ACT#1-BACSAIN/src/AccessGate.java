@@ -1,3 +1,5 @@
+package src;
+
 import javax.swing.*;
 import java.util.Arrays;
 
@@ -28,7 +30,10 @@ public final class AccessGate {
     }
 
     public static boolean promptAdminCode(JFrame parent) {
-        String expected = System.getenv(ADMIN_CODE_ENV);
+        // Load environment variables from .env file if available
+        EnvLoader.load();
+        
+        String expected = EnvLoader.get(ADMIN_CODE_ENV);
         if (expected == null || expected.isBlank()) {
             expected = "admin";
             JOptionPane.showMessageDialog(parent,
